@@ -338,10 +338,10 @@ class KramdownPrismicConverterTest < Minitest::Test
         }
       }
     ]
-    html = "<ul><li><h4>Title</h4></li></ul>"
+    html = "<ul><li></li></ul><h4>Title</h4>"
     doc = Kramdown::Document.new(html, input: :html)
     assert_equal expected, doc.to_prismic
-    assert_equal 1, doc.warnings.size
+    assert_equal 0, doc.warnings.size
   end
 
   def test_convert_preformatted
@@ -632,7 +632,7 @@ class KramdownPrismicConverterTest < Minitest::Test
     html = '<div></div>'
     doc = Kramdown::Document.new(html, input: :markdown)
     assert_equal expected, doc.to_prismic
-    assert_equal 1, doc.warnings.size
+    assert_equal 0, doc.warnings.size
   end
 
   def test_convert_span_html_strong
@@ -784,5 +784,27 @@ class KramdownPrismicConverterTest < Minitest::Test
     doc = Kramdown::Document.new(markdown, input: :kramdown)
     assert_equal expected, doc.to_prismic
     assert_equal 1, doc.warnings.size
+  end
+  
+  def test_nested_heading_and_paragraph
+    expected = [
+      {
+        type: 'heading2',
+        content: {
+          text: 'TITLE',
+          spans: []
+        }
+      },
+      {
+        type: 'paragraph',
+        content: {
+          text: 'MESSAGE',
+          spans: []
+        }
+      }
+    ]
+    html = "<div><h2>TITLE</h2><p>MESSAGE</p></div>"
+    doc = Kramdown::Document.new(html, input: :html)
+    assert_equal expected, doc.to_prismic
   end
 end

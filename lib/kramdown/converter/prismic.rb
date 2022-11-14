@@ -44,10 +44,6 @@ module Kramdown
             warning('nested list moved to the top level')
             elements << element
             extract_non_nestable_elements(element, elements)
-          elsif element.type == :header
-            warning('header moved to the top level')
-            elements << element
-            extract_non_nestable_elements(element, elements)
           else
             memo << element
             extract_non_nestable_elements(element, elements)
@@ -183,6 +179,10 @@ module Kramdown
               type: 'link'
             }
           }
+        elsif element.value == 'div'
+          element.children.map do |child|
+            send("convert_#{child.type}", child)
+          end
         else
           warning('translating html elements is not supported')
           nil
